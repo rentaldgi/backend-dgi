@@ -1,8 +1,10 @@
-import app from '@adonisjs/core/app'
+import app from '@adonisjs/core/services/app'
 import Article from '#models/article'
 import ArticleView from '#models/article_view'
 import type { HttpContext } from '@adonisjs/core/http'
 import { schema, rules } from '@adonisjs/validator'
+import { promises as fs } from 'fs'
+import { join } from 'path'
 
 function generateSlug(text: string): string {
   return text
@@ -93,10 +95,13 @@ export default class ArticlesController {
 
       const thumbnail = payload.thumbnail
       const fileName = `${Date.now()}_${thumbnail.clientName}`
+      const uploadDir = app.makePath('public/uploads')
       const publicUrl = `/uploads/${fileName}`
 
+      await fs.mkdir(uploadDir, { recursive: true })
+
       // Pindahkan file ke folder public/uploads
-      await thumbnail.move(app.publicPath('uploads'), {
+      await thumbnail.move(uploadDir, {
         name: fileName,
         overwrite: true,
       })
@@ -207,9 +212,12 @@ export default class ArticlesController {
       let newThumbnailUrl = article.thumbnail
       if (payload.thumbnail) {
         const fileName = `${Date.now()}_${payload.thumbnail.clientName}`
+        const uploadDir = join('public', 'uploads')
         const publicUrl = `/uploads/${fileName}`
 
-        await payload.thumbnail.move(app.publicPath('uploads'), {
+        await fs.mkdir(uploadDir, { recursive: true })
+
+        await payload.thumbnail.move(uploadDir, {
           name: fileName,
           overwrite: true,
         })

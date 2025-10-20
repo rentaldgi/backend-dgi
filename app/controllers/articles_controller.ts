@@ -18,17 +18,21 @@ export default class ArticlesController {
    */
   async index({ response, request }: HttpContext) {
     try {
-      const entity = request.qs().entity
+      const { entity } = request.qs() // ambil entity dari query string
 
-      const query = Article.query().where('dihapus', false).orderBy('createdAt', 'desc')
+      const query = Article.query()
+        .where('dihapus', false)
+        .where('status', true)
+        .orderBy('createdAt', 'desc')
 
-      // Hanya filter entity jika ada
+      // Filter berdasarkan entity jika dikirim di query string
       if (entity) {
-        query.where('entity', entity).where('status', true).orderBy('createdAt', 'desc')
+        query.where('entity', entity)
       }
 
       const articles = await query
-      return articles
+
+      return response.json(articles)
     } catch (error) {
       return response
         .status(500)
@@ -223,7 +227,6 @@ export default class ArticlesController {
       article.merge({
         slug,
         entity: payload.entity,
-        userId: article.userId, // Assuming userId should not change
         title: payload.title,
         content: payload.content,
         status: payload.status,

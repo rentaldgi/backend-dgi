@@ -8,15 +8,19 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table
-        .enum('entity', ['RENTAL_MOTOR', 'RENTAL_IPHONE', 'SEWA_APARTMENT']) // enum untuk masing-masing website
+        .enu('entity', ['RENTAL_MOTOR', 'RENTAL_IPHONE', 'SEWA_APARTMENT'], {
+          useNative: true,
+          enumName: 'entity', // nama enum di PostgreSQL
+          existingType: true, // set true kalau enum-nya sudah ada di database
+        })
         .notNullable()
+
       table.string('title').notNullable()
       table.string('slug').notNullable()
       table.text('content').notNullable()
       table.string('thumbnail').notNullable()
       table.dateTime('published_at').notNullable()
       table.boolean('status').defaultTo(false)
-      // table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE')
       table.boolean('dihapus').defaultTo(false)
 
       table.timestamp('created_at')
@@ -25,6 +29,10 @@ export default class extends BaseSchema {
   }
 
   async down() {
+    // drop tabel
     this.schema.dropTable(this.tableName)
+
+    // opsional: hapus tipe enum-nya juga
+    this.schema.raw('DROP TYPE IF EXISTS entity')
   }
 }

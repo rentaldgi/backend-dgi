@@ -12,7 +12,13 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('articles')
         .onDelete('CASCADE')
-      table.enum('entity', ['RENTAL_MOTOR', 'RENTAL_IPHONE', 'SEWA_APARTMENT']).notNullable()
+      table
+        .enu('entity', ['RENTAL_MOTOR', 'RENTAL_IPHONE', 'SEWA_APARTMENT'], {
+          useNative: true,
+          enumName: 'entity', // nama enum di PostgreSQL
+          existingType: true, // set true kalau enum-nya sudah ada di database
+        })
+        .notNullable()
       table.string('ip_address').nullable()
       table.string('user_agent').nullable()
       table.timestamp('viewed_at').defaultTo(this.now())

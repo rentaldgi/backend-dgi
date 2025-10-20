@@ -6,7 +6,13 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.enum('entity', ['RENTAL_MOTOR', 'RENTAL_IPHONE', 'SEWA_APARTMENT']).notNullable()
+      table
+        .enu('entity', ['RENTAL_MOTOR', 'RENTAL_IPHONE', 'SEWA_APARTMENT'], {
+          useNative: true,
+          enumName: 'entity', // nama enum di PostgreSQL
+          existingType: true, // set true kalau enum-nya sudah ada di database
+        })
+        .notNullable()
       table.string('path').nullable() // halaman yg dikunjungi
       table.string('ip_address').nullable()
       table.string('user_agent').nullable()

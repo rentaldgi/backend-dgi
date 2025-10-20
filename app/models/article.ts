@@ -5,7 +5,7 @@ export default class Article extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
- @column()
+  @column()
   declare entity: 'RENTAL_MOTOR' | 'RENTAL_IPHONE' | 'SEWA_APARTMENT'
 
   @column()
@@ -25,9 +25,6 @@ export default class Article extends BaseModel {
 
   @column.date()
   declare publishedAt: DateTime
-
-  @column()
-  declare userId: number
 
   @column()
   declare dihapus: boolean
